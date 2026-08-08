@@ -1,10 +1,10 @@
+import os
 import sys
 import subprocess
 import json
 from mitmproxy import http
 
 TARGET_HOST = "proxy.realpooh.com"
-PROXY_PORT = 2026
 
 def request(flow: http.HTTPFlow) -> None:
     try:
@@ -49,14 +49,14 @@ def response(flow: http.HTTPFlow) -> None:
     try:
         if TARGET_HOST in flow.request.pretty_host:
             if flow.response and flow.response.content:
-                # จุดจัดการ Response เพิ่มเติมถ้าต้องการ
                 pass
     except Exception as e:
         print(f"[-] Error processing response: {e}")
 
 if __name__ == "__main__":
-    # เรียกสั่ง mitmdump ผ่าน CLI โดยตรงเพื่อตัดปัญหา Execution Loop
-    cmd = [sys.executable, "-m", "mitmproxy.tools.main.mitmdump", "-p", str(PROXY_PORT), "-s", __file__]
+    # ดึงค่า PORT จาก Render (ถ้าไม่มีให้ใช้ 10000)
+    port = os.environ.get("PORT", "10000")
+    cmd = [sys.executable, "-m", "mitmproxy.tools.main.mitmdump", "-p", port, "-s", __file__]
     try:
         subprocess.run(cmd)
     except KeyboardInterrupt:
