@@ -54,9 +54,9 @@ def response(flow: http.HTTPFlow) -> None:
         print(f"[-] Error processing response: {e}")
 
 if __name__ == "__main__":
-    # ดึงค่า PORT จาก Render (ถ้าไม่มีให้ใช้ 10000)
-    port = os.environ.get("PORT", "10000")
-    cmd = [sys.executable, "-m", "mitmproxy.tools.main.mitmdump", "-p", port, "-s", __file__]
+    port = int(os.environ.get("PORT", "10000"))
+    # เรียกใช้ mitmdump ตรงๆ ผ่าน command line
+    cmd = ["mitmdump", "-p", str(port), "-s", __file__]
     try:
         subprocess.run(cmd)
     except KeyboardInterrupt:
